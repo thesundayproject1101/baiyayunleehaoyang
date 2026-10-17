@@ -12,13 +12,13 @@
         <h3>寫入資料</h3>
         <input type="text" id="userId" placeholder="使用者ID (例如: user1)" value="user1">
         <input type="text" id="userName" placeholder="姓名" value="測試使用者">
-        <button onclick="handleWrite()">寫入資料</button>
+        <button id="writeBtn">寫入資料</button>
     </div>
 
     <div style="margin-bottom: 20px;">
         <h3>讀取資料</h3>
         <input type="text" id="readUserId" placeholder="要查詢的ID" value="user1">
-        <button onclick="handleRead()">讀取資料</button>
+        <button id="readBtn">讀取資料</button>
         <p id="result" style="font-weight: bold; color: blue;"></p>
     </div>
 
@@ -28,20 +28,20 @@
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
-            apiKey: "您的API_KEY",
+            apiKey: "請在此填入您的真實apiKey",
             authDomain: "the-sunday-project-8411a.firebaseapp.com",
             databaseURL: "https://the-sunday-project-8411a-default-rtdb.firebaseio.com/",
             projectId: "the-sunday-project-8411a",
             storageBucket: "the-sunday-project-8411a.appspot.com",
-            messagingSenderId: "您的SENDER_ID",
-            appId: "您的APP_ID"
+            messagingSenderId: "請在此填入您的真實messagingSenderId",
+            appId: "請在此填入您的真實appId"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 綁定寫入動作
-        window.handleWrite = function() {
+        // 使用監聽器綁定按鈕，避免模組化作用域抓不到函數
+        document.getElementById('writeBtn').addEventListener('click', function() {
             const id = document.getElementById('userId').value;
             const name = document.getElementById('userName').value;
             
@@ -53,10 +53,9 @@
             }).catch((error) => {
                 alert("寫入失敗：" + error.message);
             });
-        };
+        });
 
-        // 綁定讀取動作
-        window.handleRead = function() {
+        document.getElementById('readBtn').addEventListener('click', function() {
             const id = document.getElementById('readUserId').value;
             const dbRef = ref(db);
             
@@ -70,7 +69,7 @@
             }).catch((error) => {
                 console.error(error);
             });
-        };
+        });
     </script>
 </body>
 </html>
