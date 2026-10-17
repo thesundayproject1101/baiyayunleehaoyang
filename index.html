@@ -2,21 +2,34 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>Firebase Realtime Database 範例</title>
+    <title>Firebase 讀寫測試</title>
 </head>
 <body>
     <h1>Firebase 讀寫測試</h1>
 
-    <!-- 引入 Firebase SDK (使用 CDN) -->
+    <!-- 簡易操作介面 -->
+    <div style="margin-bottom: 20px;">
+        <h3>寫入資料</h3>
+        <input type="text" id="userId" placeholder="使用者ID (例如: user1)" value="user1">
+        <input type="text" id="userName" placeholder="姓名" value="測試使用者">
+        <button onclick="handleWrite()">寫入資料</button>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <h3>讀取資料</h3>
+        <input type="text" id="readUserId" placeholder="要查詢的ID" value="user1">
+        <button onclick="handleRead()">讀取資料</button>
+        <p id="result" style="font-weight: bold; color: blue;"></p>
+    </div>
+
+    <!-- Firebase 邏輯 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // 您的專案設定
         const firebaseConfig = {
             apiKey: "您的API_KEY",
             authDomain: "the-sunday-project-8411a.firebaseapp.com",
-            // 代入您的 Realtime Database 網址
             databaseURL: "https://the-sunday-project-8411a-default-rtdb.firebaseio.com/",
             projectId: "the-sunday-project-8411a",
             storageBucket: "the-sunday-project-8411a.appspot.com",
@@ -24,35 +37,38 @@
             appId: "您的APP_ID"
         };
 
-        // 初始化 Firebase
         const app = initializeApp(firebaseConfig);
-        
-        // 初始化 Realtime Database
         const db = getDatabase(app);
 
-        // 範例：寫入資料
-        window.writeUserData = function(userId, name, email) {
-            set(ref(db, 'users/' + userId), {
+        // 綁定寫入動作
+        window.handleWrite = function() {
+            const id = document.getElementById('userId').value;
+            const name = document.getElementById('userName').value;
+            
+            set(ref(db, 'users/' + id), {
                 username: name,
-                email: email
+                time: new Date().toLocaleString()
             }).then(() => {
-                console.log("資料寫入成功！");
+                alert("資料寫入成功！");
             }).catch((error) => {
-                console.error("寫入失敗：", error);
+                alert("寫入失敗：" + error.message);
             });
         };
 
-        // 範例：讀取資料
-        window.readUserData = function(userId) {
+        // 綁定讀取動作
+        window.handleRead = function() {
+            const id = document.getElementById('readUserId').value;
             const dbRef = ref(db);
-            get(child(dbRef, `users/${userId}`)).then((snapshot) => {
+            
+            get(child(dbRef, `users/${id}`)).then((snapshot) => {
+                const resultElement = document.getElementById('result');
                 if (snapshot.exists()) {
-                    console.log("讀取到的資料：", snapshot.val());
+                    resultElement.innerText = "讀取結果：" + JSON.stringify(snapshot.val());
                 } else {
-                    console.log("找不到該筆資料");
+                    resultElement.innerText = "找不到該筆資料";
                 }
             }).catch((error) => {
-                console.error("讀取失敗：", error);
+                console.error(error);
             });
         };
     </script>
