@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>Firebase Realtime Database 範例</title>
+</head>
+<body>
+    <h1>Firebase 讀寫測試</h1>
+
+    <!-- 引入 Firebase SDK (使用 CDN) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // 您的專案設定
+        const firebaseConfig = {
+            apiKey: "您的API_KEY",
+            authDomain: "the-sunday-project-8411a.firebaseapp.com",
+            // 代入您的 Realtime Database 網址
+            databaseURL: "https://the-sunday-project-8411a-default-rtdb.firebaseio.com/",
+            projectId: "the-sunday-project-8411a",
+            storageBucket: "the-sunday-project-8411a.appspot.com",
+            messagingSenderId: "您的SENDER_ID",
+            appId: "您的APP_ID"
+        };
+
+        // 初始化 Firebase
+        const app = initializeApp(firebaseConfig);
+        
+        // 初始化 Realtime Database
+        const db = getDatabase(app);
+
+        // 範例：寫入資料
+        window.writeUserData = function(userId, name, email) {
+            set(ref(db, 'users/' + userId), {
+                username: name,
+                email: email
+            }).then(() => {
+                console.log("資料寫入成功！");
+            }).catch((error) => {
+                console.error("寫入失敗：", error);
+            });
+        };
+
+        // 範例：讀取資料
+        window.readUserData = function(userId) {
+            const dbRef = ref(db);
+            get(child(dbRef, `users/${userId}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    console.log("讀取到的資料：", snapshot.val());
+                } else {
+                    console.log("找不到該筆資料");
+                }
+            }).catch((error) => {
+                console.error("讀取失敗：", error);
+            });
+        };
+    </script>
+</body>
+</html>
